@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.cluster import DBSCAN
 import os
 from celery_app import celery_app
-from scipy.stats import gaussian_kde
 
 @celery_app.task
 def process_data_task(file_path: str):

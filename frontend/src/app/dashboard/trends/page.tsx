@@ -35,15 +35,6 @@ export default function Trends() {
     );
   }
 
-  // Dummy Chart Options since we don't have the exact columns parsed yet
-  // You would replace this with actual aggregated data from the backend
-  const monthlyCrashOption = {
-    tooltip: { trigger: 'axis' },
-    xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] },
-    yAxis: { type: 'value' },
-    series: [{ data: [150, 230, 224, 218, 135, 147, 260], type: 'line', smooth: true, lineStyle: { color: '#a855f7' } }]
-  };
-
   const severityOption = {
     tooltip: { trigger: 'item' },
     series: [
@@ -51,12 +42,21 @@ export default function Trends() {
         name: 'Severity',
         type: 'pie',
         radius: ['40%', '70%'],
-        data: [
-          { value: 1048, name: 'Slight' },
-          { value: 735, name: 'Serious' },
-          { value: 580, name: 'Fatal' }
-        ],
+        data: data?.trends?.severity || [],
         emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' } }
+      }
+    ]
+  };
+
+  const collisionOption = {
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'category', data: data?.trends?.collision_types?.map((d: any) => d.name) || [] },
+    yAxis: { type: 'value' },
+    series: [
+      {
+        data: data?.trends?.collision_types?.map((d: any) => d.value) || [],
+        type: 'bar',
+        itemStyle: { color: '#a855f7' }
       }
     ]
   };
@@ -74,13 +74,13 @@ export default function Trends() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-[#112240] p-6 rounded-2xl border border-gray-800">
-          <h2 className="text-xl font-semibold mb-4">Crashes Over Time</h2>
-          <ReactECharts option={monthlyCrashOption} theme="dark" style={{ height: '300px' }} opts={{ renderer: 'svg' }} />
+          <h2 className="text-xl font-semibold mb-4">Crash Severity Distribution</h2>
+          <ReactECharts option={severityOption} theme="dark" style={{ height: '300px' }} opts={{ renderer: 'svg' }} />
         </div>
         
         <div className="bg-[#112240] p-6 rounded-2xl border border-gray-800">
-          <h2 className="text-xl font-semibold mb-4">Crash Severity Distribution</h2>
-          <ReactECharts option={severityOption} theme="dark" style={{ height: '300px' }} opts={{ renderer: 'svg' }} />
+          <h2 className="text-xl font-semibold mb-4">Collision Types</h2>
+          <ReactECharts option={collisionOption} theme="dark" style={{ height: '300px' }} opts={{ renderer: 'svg' }} />
         </div>
       </div>
     </div>

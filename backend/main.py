@@ -47,7 +47,7 @@ async def get_dashboard_data():
     total_crashes = len(df)
     
     # Prepare map data (return as JSON for Deck.gl)
-    map_data = df.select(["Latitude", "Longitude", "Cluster_ID"]).to_dicts()
+    map_data = df.select(["Latitude", "Longitude", "Cluster_ID", "Severity"]).to_dicts()
     
     # Blackspots data
     if os.path.exists("processed/blackspots.parquet"):
@@ -56,11 +56,27 @@ async def get_dashboard_data():
     else:
         blackspots_data = []
         
+    # Severity distribution
+    severity_counts = []
+    if "Severity" in df.columns:
+        counts = df.group_by("Severity").len().to_dicts()
+        severity_counts = [{"name": row["Severity"], "value": row["len"]} for row in counts if row["Severity"]]
+
+    # Collision Type distribution
+    collision_counts = []
+    if "Collision_Type" in df.columns:
+        counts = df.group_by("Collision_Type").len().to_dicts()
+        collision_counts = [{"name": row["Collision_Type"], "value": row["len"]} for row in counts if row["Collision_Type"]]
+
     return {
         "stats": {
             "total_crashes": total_crashes,
             "blackspots_count": len(blackspots_data)
         },
         "map_data": map_data,
-        "blackspots": blackspots_data
+        "blackspots": blackspots_data,
+        "trends": {
+            "severity": severity_counts,
+            "collision_types": collision_counts
+        }
     }
