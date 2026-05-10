@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+      
+  db:
+    image: postgis/postgis:15-3.3-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: crash_data
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./processed:/app/processed
+    depends_on:
+      - redis
+      - db
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    
+  celery_worker:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+      - ./processed:/app/processed
+    depends_on:
+      - redis
+      - db
+    command: celery -A celery_app worker --loglevel=info
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

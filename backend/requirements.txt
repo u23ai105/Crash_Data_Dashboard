@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+polars
+pyarrow
+fastexcel
+numpy
+scikit-learn
+scipy
+celery
+redis
+sqlalchemy
+psycopg2-binary
+geoalchemy2
+openpyxl
