@@ -159,13 +159,13 @@ export default function DeckMap({ mapData, blackspots, kdeRadius = 20, kdeBlur =
           );
 
           // Hover enlarge effect
-          marker.on('mouseover', function () {
-            (this as any).setRadius(isNoise ? 7 : 8);
-            (this as any).setStyle({ weight: 2.5, fillOpacity: 1 });
+          marker.on('mouseover', (e: any) => {
+            e.target.setRadius(isNoise ? 7 : 8);
+            e.target.setStyle({ weight: 2.5, fillOpacity: 1 });
           });
-          marker.on('mouseout', function () {
-            (this as any).setRadius(isNoise ? 4 : 5.5);
-            (this as any).setStyle({ weight: isNoise ? 1 : 1.5, fillOpacity: isNoise ? 0.6 : 0.85 });
+          marker.on('mouseout', (e: any) => {
+            e.target.setRadius(isNoise ? 4 : 5.5);
+            e.target.setStyle({ weight: isNoise ? 1 : 1.5, fillOpacity: isNoise ? 0.6 : 0.85 });
           });
 
           crashGroup.addLayer(marker);
@@ -222,13 +222,13 @@ export default function DeckMap({ mapData, blackspots, kdeRadius = 20, kdeBlur =
             `High-risk zone · DBSCAN ε=50m, minPts=5</div></div>`
           );
 
-          centroid.on('mouseover', function () {
-            (this as any).setRadius(14);
-            (this as any).setStyle({ weight: 3 });
+          centroid.on('mouseover', (e: any) => {
+            e.target.setRadius(14);
+            e.target.setStyle({ weight: 3 });
           });
-          centroid.on('mouseout', function () {
-            (this as any).setRadius(10);
-            (this as any).setStyle({ weight: 2.5 });
+          centroid.on('mouseout', (e: any) => {
+            e.target.setRadius(10);
+            e.target.setStyle({ weight: 2.5 });
           });
 
           bsGroup.addLayer(centroid);
