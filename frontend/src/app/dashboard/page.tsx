@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const DeckMap = dynamic(() => import("../../components/DeckMap"), { ssr: false });
 
 export default function Dashboard() {
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [legendOpen, setLegendOpen] = useState(true);
