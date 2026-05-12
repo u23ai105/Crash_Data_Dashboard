@@ -31,8 +31,14 @@ export default function Trends() {
       try {
         const res = await api.get("/api/datasets");
         setDatasets(res.data);
-        if (res.data.length > 0 && datasetId === 0) {
+        
+        // Global Selection Sync: Check localStorage first
+        const savedDs = localStorage.getItem("selected_dataset_id");
+        if (savedDs && res.data.some((d: any) => d.id === Number(savedDs))) {
+          setDatasetId(Number(savedDs));
+        } else if (res.data.length > 0 && datasetId === 0) {
           setDatasetId(res.data[0].id);
+          localStorage.setItem("selected_dataset_id", res.data[0].id.toString());
         }
       } catch (err) { console.error(err); }
     };
@@ -163,7 +169,11 @@ export default function Trends() {
             {/* Dataset Selector */}
             <select 
               value={datasetId} 
-              onChange={(e) => setDatasetId(Number(e.target.value))}
+              onChange={(e) => {
+                const id = Number(e.target.value);
+                setDatasetId(id);
+                localStorage.setItem("selected_dataset_id", id.toString());
+              }}
               className="bg-white border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block px-3 py-2 shadow-sm font-bold"
             >
               {datasets.map(ds => (

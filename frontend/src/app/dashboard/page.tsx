@@ -45,8 +45,14 @@ export default function Dashboard() {
     // Fetch available datasets on mount
     api.get("/api/datasets").then(res => {
       setDatasets(res.data);
-      if (res.data.length > 0) {
+      
+      // Global Selection Sync: Check localStorage first
+      const savedDs = localStorage.getItem("selected_dataset_id");
+      if (savedDs && res.data.some((d: any) => d.id === Number(savedDs))) {
+        setDatasetId(Number(savedDs));
+      } else if (res.data.length > 0) {
         setDatasetId(res.data[0].id);
+        localStorage.setItem("selected_dataset_id", res.data[0].id.toString());
       } else {
         setLoading(false); // No data
       }
@@ -55,6 +61,11 @@ export default function Dashboard() {
       setLoading(false);
     });
   }, []);
+
+  const handleDatasetChange = (id: number) => {
+    setDatasetId(id);
+    localStorage.setItem("selected_dataset_id", id.toString());
+  };
 
   const fetchData = async () => {
     if (datasetId === 0) return;
@@ -181,6 +192,21 @@ export default function Dashboard() {
               <Layers size={10} /> Stats
             </button>
             <div className="w-px h-4 bg-gray-300 mx-1" />
+            
+            {/* Global Dataset Selector */}
+            <div className="flex items-center gap-2 mr-2">
+              <Database size={12} className="text-gray-400" />
+              <select 
+                value={datasetId} 
+                onChange={(e) => handleDatasetChange(Number(e.target.value))}
+                className="bg-gray-50 border border-gray-200 text-gray-700 text-[10px] rounded-md focus:ring-indigo-500 focus:border-indigo-500 block px-2 py-1.5 shadow-sm font-bold outline-none"
+              >
+                {datasets.map(ds => (
+                  <option key={ds.id} value={ds.id}>{ds.name}</option>
+                ))}
+              </select>
+            </div>
+
             <a href={`${API_URL}/api/export/dataset?dataset_id=${datasetId}`} download className="flex items-center gap-1 text-[10px] px-2 py-1.5 bg-gray-100 border border-gray-200 rounded-md text-gray-600 font-medium hover:bg-gray-200 transition-all">
               <Download size={10} /> CSV
             </a>
