@@ -29,7 +29,11 @@ export default function Home() {
 
   const itemVariants = {
     hidden: { y: 30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } }
+    visible: { 
+      y: 0, 
+      opacity: 1, 
+      transition: { duration: 0.5 } 
+    }
   };
 
   return (
