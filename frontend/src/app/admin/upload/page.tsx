@@ -5,6 +5,7 @@ import { UploadCloud, CheckCircle, AlertCircle, Loader2, ArrowLeft, FileSpreadsh
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import api, { API_URL } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminUpload() {
@@ -30,7 +31,7 @@ export default function AdminUpload() {
 
   const fetchDatasets = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/datasets");
+      const res = await api.get("/api/datasets");
       setDatasets(res.data);
     } catch (e) {
       console.error("Failed to fetch datasets", e);
@@ -70,7 +71,7 @@ export default function AdminUpload() {
     formData.append("dataset_name", datasetName);
 
     try {
-      const response = await axios.post("http://localhost:8000/api/upload", formData, {
+      const response = await api.post("/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       
@@ -86,7 +87,7 @@ export default function AdminUpload() {
   const pollStatus = async (id: string) => {
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/status/${id}`);
+        const res = await api.get(`/api/status/${id}`);
         if (res.data.status === "SUCCESS") {
           clearInterval(interval);
           setStatus("success");
@@ -108,7 +109,7 @@ export default function AdminUpload() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this dataset?")) return;
     try {
-      await axios.delete(`http://localhost:8000/api/datasets/${id}`);
+      await api.delete(`/api/datasets/${id}`);
       fetchDatasets();
     } catch (e) {
       alert("Failed to delete dataset");

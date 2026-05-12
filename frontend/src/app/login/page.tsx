@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import api, { API_URL } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Shield, Lock, User, ArrowRight, UserPlus, ArrowLeft } from "lucide-react";
@@ -30,7 +31,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post("http://localhost:8000/api/login", { username, password });
+      const res = await api.post("/api/login", { username, password });
       localStorage.setItem("user", JSON.stringify(res.data));
       if (res.data.role === "admin") {
         router.push("/admin/upload");
@@ -56,7 +57,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8000/api/signup", { username, password });
+      const res = await api.post("/api/signup", { username, password });
       localStorage.setItem("user", JSON.stringify(res.data));
       router.push("/dashboard");
     } catch (err: any) {

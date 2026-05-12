@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import api, { API_URL } from "@/lib/api";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,7 +35,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Fetch available datasets on mount
-    axios.get("http://localhost:8000/api/datasets").then(res => {
+    api.get("/api/datasets").then(res => {
       setDatasets(res.data);
       if (res.data.length > 0) {
         setDatasetId(res.data[0].id);
@@ -51,7 +52,7 @@ export default function Dashboard() {
     if (datasetId === 0) return;
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:8000/api/dashboard-data?dataset_id=${datasetId}&severity=${severityFilter}`);
+      const res = await api.get(`/api/dashboard-data?dataset_id=${datasetId}&severity=${severityFilter}`);
       setData(res.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -67,7 +68,7 @@ export default function Dashboard() {
   const handleRecluster = async () => {
     setIsReclustering(true);
     try {
-      await axios.post("http://localhost:8000/api/recluster", { dataset_id: datasetId, epsilon, min_samples: minPts });
+      await api.post("/api/recluster", { dataset_id: datasetId, epsilon, min_samples: minPts });
       await fetchData();
     } catch (e) {
       console.error("Failed to recluster", e);
@@ -172,10 +173,10 @@ export default function Dashboard() {
               <Layers size={10} /> Stats
             </button>
             <div className="w-px h-4 bg-gray-300 mx-1" />
-            <a href={`http://localhost:8000/api/export/dataset?dataset_id=${datasetId}`} download className="flex items-center gap-1 text-[10px] px-2 py-1.5 bg-gray-100 border border-gray-200 rounded-md text-gray-600 font-medium hover:bg-gray-200 transition-all">
+            <a href={`${API_URL}/api/export/dataset?dataset_id=${datasetId}`} download className="flex items-center gap-1 text-[10px] px-2 py-1.5 bg-gray-100 border border-gray-200 rounded-md text-gray-600 font-medium hover:bg-gray-200 transition-all">
               <Download size={10} /> CSV
             </a>
-            <a href={`http://localhost:8000/api/export/report?dataset_id=${datasetId}`} download className="flex items-center gap-1 text-[10px] px-2.5 py-1.5 bg-indigo-600 border border-indigo-700 rounded-md text-white hover:bg-indigo-700 transition-all font-medium shadow-sm">
+            <a href={`${API_URL}/api/export/report?dataset_id=${datasetId}`} download className="flex items-center gap-1 text-[10px] px-2.5 py-1.5 bg-indigo-600 border border-indigo-700 rounded-md text-white hover:bg-indigo-700 transition-all font-medium shadow-sm">
               <FileText size={10} /> PDF Report
             </a>
             <div className="w-px h-4 bg-gray-300 mx-1" />

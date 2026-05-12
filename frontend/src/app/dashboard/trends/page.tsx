@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import api, { API_URL } from "@/lib/api";
 import Link from "next/link";
 import { 
   ArrowLeft, Activity, BarChart3, Clock, Calendar, Cloud, Route, 
@@ -21,7 +22,7 @@ export default function Trends() {
   useEffect(() => {
     const fetchDatasets = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/datasets");
+        const res = await api.get("/api/datasets");
         setDatasets(res.data);
         if (res.data.length > 0 && datasetId === 0) {
           setDatasetId(res.data[0].id);
@@ -37,7 +38,7 @@ export default function Trends() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://localhost:8000/api/dashboard-data?dataset_id=${datasetId}&severity=${severityFilter}`);
+        const res = await api.get(`/api/dashboard-data?dataset_id=${datasetId}&severity=${severityFilter}`);
         setData(res.data);
       } catch (error) {
         console.error("Error fetching data:", error);
