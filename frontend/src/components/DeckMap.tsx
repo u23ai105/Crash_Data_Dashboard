@@ -29,6 +29,7 @@ export default function DeckMap({ mapData, blackspots, kdeRadius = 20, kdeBlur =
     const boot = async () => {
       const L = (await import('leaflet')).default;
       await import('leaflet/dist/leaflet.css');
+      // @ts-ignore
       try { await import('leaflet.heat'); } catch {}
 
       if (cancelled) return;
