@@ -34,6 +34,13 @@ export default function Dashboard() {
   const [isReclustering, setIsReclustering] = useState(false);
 
   useEffect(() => {
+    // Security Check: Redirect if not logged in
+    const user = localStorage.getItem("user");
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     // Fetch available datasets on mount
     api.get("/api/datasets").then(res => {
       setDatasets(res.data);

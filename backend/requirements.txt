@@ -3,8 +3,8 @@ uvicorn
 python-multipart
 polars
 pyarrow
-fastexcel
 numpy
-scikit-learn
-scipy
 openpyxl
+python-jose
+passlib
+bcrypt

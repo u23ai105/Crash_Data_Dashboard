@@ -20,6 +20,13 @@ export default function Trends() {
   const [datasetId, setDatasetId] = useState<number>(0);
 
   useEffect(() => {
+    // Security Check: Redirect if not logged in
+    const user = localStorage.getItem("user");
+    if (!user) {
+      window.location.href = "/login";
+      return;
+    }
+
     const fetchDatasets = async () => {
       try {
         const res = await api.get("/api/datasets");
