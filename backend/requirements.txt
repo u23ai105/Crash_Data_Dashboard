@@ -8,3 +8,7 @@ openpyxl
 python-jose
 passlib
 bcrypt
+scikit-learn
+reportlab
+psycopg2-binary
+celery

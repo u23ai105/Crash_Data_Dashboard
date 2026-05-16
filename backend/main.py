@@ -22,6 +22,14 @@ app.add_middleware(
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("processed", exist_ok=True)
 
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Crash Data API is running"}
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
+
 from pydantic import BaseModel
 class LoginRequest(BaseModel):
     username: str
