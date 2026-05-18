@@ -89,10 +89,13 @@ async def delete_dataset(dataset_id: int):
     
     # Clean up files
     import shutil
-    if os.path.exists(ds["processed_dir"]):
-        shutil.rmtree(ds["processed_dir"])
-    if os.path.exists(ds["file_path"]):
-        os.remove(ds["file_path"])
+    try:
+        if ds.get("processed_dir") and os.path.exists(ds["processed_dir"]):
+            shutil.rmtree(ds["processed_dir"])
+        if ds.get("file_path") and os.path.exists(ds["file_path"]):
+            os.remove(ds["file_path"])
+    except Exception as e:
+        print(f"Warning: Could not delete files for dataset {dataset_id}: {e}")
         
     return {"message": "Deleted successfully"}
 

@@ -12,3 +12,4 @@ scikit-learn
 reportlab
 psycopg2-binary
 celery
+fastexcel
