@@ -103,13 +103,18 @@ async def upload_file(background_tasks: BackgroundTasks, dataset_name: str = For
         shutil.copyfileobj(file.file, buffer)
         
     conn = database.get_db()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO datasets (name, file_path, processed_dir) VALUES (?, ?, ?)", 
-                  (dataset_name, file_path, ""))
-    dataset_id = cursor.lastrowid
+    if getattr(conn, 'is_postgres', False):
+        cursor = conn.execute("INSERT INTO datasets (name, file_path, processed_dir) VALUES (?, ?, ?) RETURNING id", 
+                              (dataset_name, file_path, ""))
+        dataset_id = cursor.fetchone()["id"]
+    else:
+        cursor = conn.execute("INSERT INTO datasets (name, file_path, processed_dir) VALUES (?, ?, ?)", 
+                              (dataset_name, file_path, ""))
+        dataset_id = cursor.lastrowid
+        
     processed_dir = f"processed/{dataset_id}"
     os.makedirs(processed_dir, exist_ok=True)
-    cursor.execute("UPDATE datasets SET processed_dir = ? WHERE id = ?", (processed_dir, dataset_id))
+    conn.execute("UPDATE datasets SET processed_dir = ? WHERE id = ?", (processed_dir, dataset_id))
     conn.commit()
     conn.close()
     
